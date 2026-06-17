@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Setup Directory</title>
+    <style>
+        /* --- Global Styles & Design Tokens --- */
+        :root {
+            --bg-color: #f5f5f7;
+            --card-bg: #ffffff;
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --accent-orange: #bf4800;
+            --apple-blue: #0071e3;
+            --apple-blue-hover: #0077ed;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
+            --border-radius: 18px;
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Dark Mode Override Tokens */
+        [data-theme="dark"] {
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
+            --text-main: #f5f5f7;
+            --text-sub: #86868b;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: var(--transition);
+            min-height: 100vh;
+        }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--text-sub);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        /* --- Header Section --- */
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        /* --- Responsive Grid Layout --- */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* --- Minimalist Product Card --- */
+        .product-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .product-card.visible {
+            animation: fadeInUp 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* --- Image Container & Clean Image Zoom (No Cropping) --- */
+        .image-container {
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            background-color: rgba(0,0,0,0.01);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px; /* Gives padding so edges don't touch boundaries */
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* SCALES CLEANLY DOWN WITHOUT CROPPING */
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Executes scroll/hover image zoom interaction cleanly */
+        .product-card:hover .image-container img {
+            transform: scale(1.05); /* Soft, premium zoom scaling */
+        }
+
+        /* --- Card Content & Centered Layout Elements --- */
+        .card-content {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            text-align: center; /* Perfectly centered alignment */
+            align-items: center;
+        }
+
+        .category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-orange);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+
+        .card-content p {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            flex-grow: 1;
+            max-width: 260px;
+        }
+
+        /* --- Premium Apple Action Button --- */
+        .buy-button {
+            display: inline-block;
+            background-color: var(--apple-blue);
+            color: #ffffff;
+            padding: 10px 22px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 22px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .buy-button:hover {
+            background-color: var(--apple-blue-hover);
+            transform: scale(1.02);
+        }
+
+        .buy-button:active {
+            transform: scale(0.98);
+        }
+
+        /* --- Core Layout Animations --- */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Responsive Media Viewports --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 60px 15px 40px 15px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+            .theme-toggle-btn {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                top: auto;
+                z-index: 100;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- INTERACTIVE JAVASCRIPT THEME TOGGLE BUTTON -->
+    <button class="theme-toggle-btn" id="themeToggle">Dark Mode</button>
+
+    <header>
+        <h1>Minimalist Setup Co.</h1>
+        <p>A curated directory of high-end workspace essentials, desk accessories, and clean peripheral configurations.</p>
+    </header>
+
+    <div class="product-grid">
+
+        <!-- CARD 1: SAMSUNG ODYSSEY G5 -->
+        <div class="product-card">
+            <div class="image-container">
+                <img src="images/samsungodesseyg5.jpg" alt="Samsung 32-Inch Odyssey G5 Gaming Monitor">
+            </div>
+            <div class="card-content">
+                <span class="category">Monitors</span>
+                <h3>Samsung 32" Odyssey G5</h3>
+                <p>1000R curved gaming monitor featuring QHD resolution and ultra-fast refresh rate for an immersive layout.</p>
+                <a href="https://amzn.to/4vqalYo" target="_blank" class="buy-button">View on Amazon</a>
+            </div>
+        </div>
+
+        <!-- CARD 2: MONITOR ARM 1 -->
+        <div class="product-card">
+            <div class="image-container">
+                <img src="images/Monitorarm1.jpg" alt="Premium Desk Mount Monitor Arm">
+            </div>
+            <div class="card-content">
+                <span class="category">Desk Organization</span>
+                <h3>Premium Monitor Desk Mount</h3>
+                <p>Heavy-duty adjustable monitor arm to clear up desk space and achieve a perfect floating screen aesthetic.</p>
+                <a href="https://amzn.to/3QvBJFc" target="_blank" class="buy-button">View on Amazon</a>
+            </div>
+        </div>
+
+        <!-- CARD 3: GOVEE LED BAR -->
+        <div class="product-card">
+            <div class="image-container">
+                <img src="images/gooveledbar.webp" alt="Govee Ambient RGBIC LED Light Bars">
+            </div>
+            <div class="card-content">
+                <span class="category">Lighting</span>
+                <h3>Govee Ambient LED Bars</h3>
+                <p>Smart RGBIC light bars that sync with your setup to cast a uniform, vibrant backlighting glow.</p>
+                <a href="https://amzn.to/4vU5pLr" target="_blank" class="buy-button">View on Amazon</a>
+            </div>
+        </div>
+
+        <!-- CARD 4: FELT DESK MAT -->
+        <div class="product-card">
+            <div class="image-container">
+                <img src="images/feltdeskmat.jpg" alt="Minimalist Felt Desk Mat">
+            </div>
+            <div class="card-content">
+                <span class="category">Desk Accessories</span>
+                <h3>Minimalist Felt Desk Mat</h3>
+                <p>Premium wool felt surface that adds high-contrast texture and protects your workspace layout.</p>
+                <a href="https://amzn.to/4erF93L" target="_blank" class="buy-button">View on Amazon</a>
+            </div>
+        </div>
+
+        <!-- CARD 5: MONITOR LAMP -->
+        <div class="product-card">
+            <div class="image-container">
+                <img src="images/monitorlamp.webp" alt="Sleek Screen Monitor Light Bar">
+            </div>
+            <div class="card-content">
+                <span class="category">Lighting</span>
+                <h3>Sleek Monitor Light Bar</h3>
+                <p>Space-saving desk lamp that mounts directly to your screen for glare-free surface illumination.</p>
+                <a href="https://amzn.to/4xAHsdH" target="_blank" class="buy-button">View on Amazon</a>
+            </div>
+        </div>
+
+        <!-- CARD 6: PEGBOARD -->
+        <div class="product-card">
+            <div class="image-container">
+                <img src="images/pegboardkit.jpg" alt="Wall Organizer Pegboard Kit">
+            </div>
+            <div class="card-content">
+                <span class="category">Desk Organization</span>
+                <h3>Wall Organizer Pegboard Kit</h3>
+                <p>Modular vertical storage system to keep your gear accessible while keeping your tabletop completely clear.</p>
+                <a href="https://amzn.to/4go5JNQ" target="_blank" class="buy-button">View on Amazon</a>
+            </div>
+        </div>
+
+        <!-- CARD 7: ATTACK SHARK MOUSE -->
+        <div class="product-card">
+            <div class="image-container">
+                <img src="images/atmouse.jpg" alt="Attack Shark Lightweight Gaming Mouse">
+            </div>
+            <div class="card-content">
+                <span class="category">Peripherals</span>
+                <h3>Attack Shark Wireless Mouse</h3>
+                <p>Ultra-lightweight ergonomic mouse providing premium tracking performance with a clean visual profile.</p>
+                <a href="https://amzn.to/4efsvGs" target="_blank" class="buy-button">View on Amazon</a>
+            </div>
+        </div>
+
+        <!-- CARD 8: AULA KEYBOARD -->
+        <div class="product-card">
+            <div class="image-container">
+                <img src="images/aulakeyboard.webp" alt="Aula Mechanical Gaming Keyboard">
+            </div>
+            <div class="card-content">
+                <span class="category">Peripherals</span>
+                <h3>Aula Mechanical Keyboard</h3>
+                <p>Premium mechanical keyboard built for custom typing acoustics and a perfectly centered, compact footprint.</p>
+                <a href="https://amzn.to/3ScS56k" target="_blank" class="buy-button">View on Amazon</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- --- JavaScript Functional Script Engine --- -->
+    <script>
+        // 1. Dark Theme Toggle Interaction Logic
+        const toggleBtn = document.getElementById('themeToggle');
+        toggleBtn.addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.body.removeAttribute('data-theme');
+                toggleBtn.textContent = 'Dark Mode';
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                toggleBtn.textContent = 'Light Mode';
+            }
+        });
+
+        // 2. Cascade Entrance Scroll Animation Logic 
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.product-card');
+            cards.forEach((card, index) => {
+                // Creates a staggered fade-in visual experience
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 80); 
+            });
+        });
+    </script>
+</body>
+</html>
